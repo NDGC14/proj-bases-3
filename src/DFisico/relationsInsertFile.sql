@@ -335,14 +335,14 @@ INSERT INTO InventarioCafeteria (Nombre_Cafeteria, Nombre_Producto, Existencias)
 
 INSERT INTO Compra (ID_Miembro, ID_Colaborador, Fecha, Total_Compra) VALUES (1, 1, TO_DATE('20-03-2023', 'DD-MM-YYYY'), 47500); -- Compra ID 1
 
+INSERT INTO ImpuestoXCompra (ID_Compra, Tipo_Impuesto, Porcentaje) VALUES (1, 'IVA', 19);
+INSERT INTO ImpuestoXCompra (ID_Compra, Tipo_Impuesto, Porcentaje) VALUES (1, 'ICA', 6);
+
 INSERT INTO CompraxProducto (ID_Compra, Nombre_Producto, Cantidad) VALUES (1, 'Pizza', 1);  -- 1 Pizza
 INSERT INTO CompraxProducto (ID_Compra, Nombre_Producto, Cantidad) VALUES (1, 'Té', 2);  -- 2 Té
 INSERT INTO CompraxProducto (ID_Compra, Nombre_Producto, Cantidad) VALUES (1, 'Bebida Energética', 1);  -- 1 Bebida Energética
 
 INSERT INTO TxPuntos (ID_Compra, Fecha, Total_Puntos, Tipo, ID_Miembro) VALUES (1, TO_DATE('20-03-2023', 'DD-MM-YYYY'), 38, 'ACUMULAR', 1);
-
-INSERT INTO ImpuestoXCompra (ID_Compra, Tipo_Impuesto, Porcentaje) VALUES (1, 'IVA', 19);
-INSERT INTO ImpuestoXCompra (ID_Compra, Tipo_Impuesto, Porcentaje) VALUES (1, 'ICA', 6);
 
 INSERT INTO Pago (ID_Compra, Monto_total, Metodo_Pago) VALUES (1, 47500, 'EFECTIVO');
 
@@ -350,13 +350,13 @@ INSERT INTO Pago (ID_Compra, Monto_total, Metodo_Pago) VALUES (1, 47500, 'EFECTI
 
 INSERT INTO Compra (ID_Miembro, ID_Colaborador, Fecha, Total_Compra) VALUES (3, 5, TO_DATE('24-03-2023', 'DD-MM-YYYY'), 21000);
 
+INSERT INTO ImpuestoXCompra (ID_Compra, Tipo_Impuesto, Porcentaje) VALUES (2, 'IVA', 19);
+
 INSERT INTO CompraxProducto (ID_Compra, Nombre_Producto, Cantidad) VALUES (2, 'Sopa', 1);  -- 1 Sopa
 INSERT INTO CompraxProducto (ID_Compra, Nombre_Producto, Cantidad) VALUES (2, 'Té', 1);  -- 1 Té
 INSERT INTO CompraxProducto (ID_Compra, Nombre_Producto, Cantidad) VALUES (2, 'Helado', 2);  -- 2 Helado
 
 INSERT INTO TxPuntos (ID_Compra, Fecha, Total_Puntos, Tipo, ID_Miembro) VALUES (1, TO_DATE('24-03-2023', 'DD-MM-YYYY'), 21, 'ACUMULAR', 3);
-
-INSERT INTO ImpuestoXCompra (ID_Compra, Tipo_Impuesto, Porcentaje) VALUES (2, 'IVA', 19);
 
 INSERT INTO Pago (ID_Compra, Monto_total, Metodo_Pago, Numero_Tarjeta) VALUES (2, 20000, 'CREDITO', '2332223211232232');
 INSERT INTO Pago (ID_Compra, Monto_total, Metodo_Pago) VALUES (2, 4990, 'EFECTIVO');

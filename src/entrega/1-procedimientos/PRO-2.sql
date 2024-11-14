@@ -1,27 +1,47 @@
-CREATE OR REPLACE PROCEDURE Calcular_Comisiones_Diarias AS
-    -- Cursor para obtener el total de ventas por cada colaborador
-    CURSOR cur_colaboradores IS
-        SELECT ID_Colaborador, SUM(Total_Compra) AS Total_Ventas
-        FROM Compra
-        GROUP BY ID_Colaborador;
+create or replace procedure calcular_comisiones_diarias as
+   comision    number;
+   ventas      number;
+   yacalculado number := 0;
+begin
+   for colab in (
+      select colaborador.id_colaborador,
+             sum(coalesce(
+                total_compra,
+                0
+             )) as total_ventas,
+             porcentaje_comision
+        from colaborador
+        full outer join (
+         select *
+           from compra
+          where trunc(fecha) = trunc(sysdate)
+      ) compra
+      on colaborador.id_colaborador = compra.id_colaborador
+       group by colaborador.id_colaborador,
+                porcentaje_comision
+   ) loop
+      select count(*)
+        into yacalculado
+        from comisiondiariacolaborador
+       where id_colaborador = colab.id_colaborador
+         and fecha = trunc(sysdate)
+         and rownum = 1;
 
-    total_ventas NUMBER;  -- Para almacenar el total de ventas del colaborador
-    comision NUMBER;      -- Para almacenar el porcentaje de comisión del colaborador
-BEGIN
-    -- Bucle que itera sobre cada colaborador
-    FOR Colaborador IN cur_colaboradores LOOP
-        -- Asignar el total de ventas del colaborador actual
-        total_ventas := colaborador.Total_Ventas;
+      if ( yacalculado > 0 ) then
+         update comisiondiariacolaborador
+            set
+            comisionventas = colab.total_ventas * ( colab.porcentaje_comision / 100 )
+          where comisiondiariacolaborador.id_colaborador = colab.id_colaborador;
+      else
+         insert into comisiondiariacolaborador (
+            id_colaborador,
+            fecha,
+            comisionventas
+         ) values ( colab.id_colaborador,
+                    trunc(sysdate),
+                    colab.total_ventas * ( colab.porcentaje_comision / 100 ) );
+      end if;
+   end loop;
 
-        -- Obtener el porcentaje de comisión del colaborador
-        SELECT Porcentaje_Comision INTO comision
-        FROM Colaborador
-        WHERE ID_Colaborador = colaborador.ID_Colaborador;
-
-        -- Insertar la comisión diaria para el colaborador
-        INSERT INTO Comisiones_Diarias (ID_Colaborador, Total_Comision)
-        VALUES (colaborador.ID_Colaborador, (total_ventas * comision) / 100);
-    END LOOP;
-
-    COMMIT;
-END;
+   commit;
+end;

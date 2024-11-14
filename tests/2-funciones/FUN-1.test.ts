@@ -9,5 +9,5 @@ test('1. Compra de 1000 - Puntos a 1000', async () => {
     `SELECT calcular_puntos_compra(1000) as puntos FROM DUAL`,
   ])
 
-  expect((responses.at(-1)?.rows?.at(-1) as any)?.at(-1)).toBe(1)
+  expect((responses.at(-1)?.r?.rows?.at(-1) as any)?.at(-1)).toBe(1)
 })

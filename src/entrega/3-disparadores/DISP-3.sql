@@ -1,36 +1,55 @@
+-- Al completar una compra, es decir, cuando se realiza un pago, se debe actualizar la comisión
+
 create or replace trigger calcular_comision_en_venta after
-   insert on compra
+   insert on pago
    for each row
 declare
-   porcentaje_comision number;
-   comision            number;
-   ventas_diarias      number := 0;  -- Iniciar como 0 en caso de que no haya ventas previas
+   v_comision       number := 0;  -- Iniciar como 0 en caso de que no haya ventas previas
+   v_ventas         number := 0;  -- Iniciar como 0 en caso de que no haya ventas previas
+   yacalculado      number := 0;
+   v_id_colaborador colaborador.id_colaborador%type;
 begin
-    -- Obtener el porcentaje de comisión del colaborador
-   select porcentaje_comision
-     into porcentaje_comision
-     from colaborador
-    where id_colaborador = :new.id_colaborador;
-
-    -- Sumar el valor de la venta a las ventas diarias del colaborador
-   select sum(total_compra)
-     into ventas_diarias
+   select compra.id_colaborador
+     into v_id_colaborador
      from compra
-    where id_colaborador = :new.id_colaborador
-      and fecha = :new.fecha;  -- Usando directamente la fecha de la compra insertada
+    where compra.id_compra = :new.id_compra
+      and rownum = 1;
 
-    -- Si no hay ventas diarias (resultado NULL), asignar 0
-   if ventas_diarias is null then
-      ventas_diarias := 0;
+   select count(*)
+     into yacalculado
+     from comisiondiariacolaborador
+    where id_colaborador = v_id_colaborador
+      and fecha = trunc(sysdate)
+      and rownum = 1;
+
+   select sum(coalesce(
+      total_compra,
+      0
+   )) as valor
+     into v_ventas
+     from colaborador,
+          compra
+    where colaborador.id_colaborador = v_id_colaborador
+      and trunc(fecha) = trunc(SYSDATE);
+
+   select porcentaje_comision
+     into v_comision
+     from colaborador
+    where id_colaborador = v_id_colaborador
+      and rownum = 1;
+
+   if ( yacalculado > 0 ) then
+      update comisiondiariacolaborador
+         set
+         comisionventas = (v_comision / 100) * v_ventas
+       where comisiondiariacolaborador.id_colaborador = v_id_colaborador;
+   else
+      insert into comisiondiariacolaborador (
+         id_colaborador,
+         fecha,
+         comisionventas
+      ) values ( v_id_colaborador,
+                 trunc(sysdate),
+                 (v_comision / 100) * v_ventas );
    end if;
-
-    -- Calcular la comisión de la venta basada en las ventas diarias
-   comision := ( ventas_diarias * porcentaje_comision ) / 100;
-
-    -- Actualizar el total de comisiones del colaborador
-   update colaborador
-      set
-      total_comision = comision
-    where id_colaborador = :new.id_colaborador;
-
 end;

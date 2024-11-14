@@ -16,7 +16,7 @@ test('1. Vender 25000 de fruta - Puntos a 500', async () => {
     WHERE ID_MIEMBRO = 1`
   ])
 
-  expect((responses.at(-1)?.rows?.at(-1) as any)?.at(-1)).toBe(450)
+  expect((responses.at(-1)?.r?.rows?.at(-1) as any)?.at(-1)).toBe(450)
 })
 
 test('2. Vender 50000 de fruta - Puntos a 500', async () => {
@@ -34,7 +34,7 @@ test('2. Vender 50000 de fruta - Puntos a 500', async () => {
     WHERE ID_MIEMBRO = 1`
   ])
 
-  expect((responses.at(-1)?.rows?.at(-1) as any)?.at(-1)).toBe(400)
+  expect((responses.at(-1)?.r?.rows?.at(-1) as any)?.at(-1)).toBe(400)
 })
 
 test('3. Vender 50000 de fruta - Puntos a 1000', async () => {
@@ -52,5 +52,5 @@ test('3. Vender 50000 de fruta - Puntos a 1000', async () => {
     WHERE ID_MIEMBRO = 1`
   ])
 
-  expect((responses.at(-1)?.rows?.at(-1) as any)?.at(-1)).toBe(450)
+  expect((responses.at(-1)?.r?.rows?.at(-1) as any)?.at(-1)).toBe(450)
 })
