@@ -1,0 +1,14 @@
+drop table compraxproducto;
+drop table txpuntos;
+drop table impuestoxcompra;
+drop table miembroxcorreo;
+drop table pago;
+drop table compra;
+drop table inventariocafeteria;
+drop table producto;
+drop table colaborador;
+drop table cafeteria;
+drop table piso;
+drop table edificio;
+drop table miembro;
+drop table puntos;
